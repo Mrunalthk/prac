@@ -1,0 +1,459 @@
+2]systen calls
+	1)fork
+#include<stdio.h>
+#include<sys/types.h>
+#include<unistd.h>
+int main()
+{
+ fork();
+ printf("OS practical\n");
+return 0;
+}
+
+	2)getpid,getppid
+#include<stdio.h>
+int main()
+{
+ int id1,id2;
+ id1=getpid();
+ id2=getppid();
+ printf("pid is %d\nppid s %d",id1,id2);
+}
+	
+	3)wait
+#include<stdio.h>
+#include<sys/wait.h>
+int main()
+{
+ if(fork()==0)
+    printf("Hello from child\n");
+else
+{
+    printf("hello from parent\n");
+    wait(NULL);
+    printf("child has terminated");
+}
+printf("bye\n");
+return 0;
+}
+	
+	4)sleep
+#include<stdio.h>
+int main()
+{
+   printf("Sleeping for 10 second\n");
+   sleep(10);
+   printf("woke up\n");
+   return 0;
+}
+
+	5)exit
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+   printf("Starting the program...\n");
+   printf("Exiting the program...\n");
+   exit(0);
+   printf("END");
+   return 0;
+}
+
+	6)execl
+#include<stdio.h>
+#include<unistd.h>
+int main()
+{
+   printf("Before\n");
+   execl("/bin/ps","ps",NULL);
+   printf("After");
+   
+}
+
+
+
+3}thread
+	1}by extending thread class
+class Multi extends Thread
+public void run()
+{
+    System.out.println("thread is running...");
+}
+public static void main(String args[])
+{
+    Multi t1=new Multi();
+    t1.start();
+}
+output: thread is running
+
+	2)byimplementing runnable interface
+class Multi 3 implements Runnable
+public void run()
+{
+    System.out.println("thread is running...");
+}
+public static void main(String args[])
+{
+    Multi 3 m1=new Multi3();
+    Thread t1=new Thread(m1);
+    t1.start();
+}
+output: thread is running
+
+
+
+4]FCFS
+#include<stdio.h>
+
+int main()
+
+{
+
+char pn[10][10];
+
+int arr[10],bur[10],star[10],finish[10],tat[10],wt[10],i,n;
+
+float totwt=0,tottat=0;
+
+
+printf("Enter the number of processes:");
+
+scanf("%d",&n);
+
+for(i=0;i<n;i++)
+
+{
+
+printf("Enter the Process Name, Arrival Time & Burst Time:");
+
+scanf("%s%d%d",&pn[i][0],&arr[i],&bur[i]);
+
+}
+
+for(i=0;i<n;i++)
+
+{
+
+if(i==0)
+
+{
+
+star[i]=arr[i];
+
+wt[i]=star[i]-arr[i];
+
+finish[i]=star[i]+bur[i];
+
+tat[i]=finish[i]-arr[i];
+
+}
+
+else
+
+{
+
+star[i]=finish[i-1];
+
+wt[i]=star[i]-arr[i];
+
+finish[i]=star[i]+bur[i];
+
+tat[i]=finish[i]-arr[i];
+
+}
+
+}
+
+printf("\nPName Arrtime Burtime \t Start \t TAT \t\t Finish");
+
+for(i=0;i<n;i++)
+ 
+{
+ 
+printf("\n%s\t%6d\t\t%6d\t%6d\t%6d\t%6d",pn[i],arr[i],bur[i],star[i],tat[i],finish[i]);
+ 
+totwt+=wt[i]; 
+
+tottat+=tat[i];
+ 
+}
+ 
+printf("\nAverage Waiting time:%f",totwt/n);
+ 
+printf("\nAverage Turn Around Time:%f",tottat/n); 
+
+
+}
+
+
+
+
+5]SJF
+#include<stdio.h> 
+
+#include<string.h>
+ 
+void main() 
+
+{ 
+
+int et[20],at[10],n,i,j,temp,st[10],ft[10],wt[10],ta[10]; 
+
+int totwt=0,totta=0; 
+
+float awt,ata;
+ 
+char pn[10][10],t[10]; 
+
+
+printf("Enter the number of process:");
+ 
+scanf("%d",&n);
+ 
+for(i=0;i<n;i++) 
+
+{ 
+
+printf("Enter process name, arrival time & execution time:");
+ 
+
+scanf("%s%d%d",pn[i],&at[i],&et[i]);
+ 
+}
+ 
+for(i=0;i<n;i++) 
+
+for(j=i+1;j<n;j++) 
+
+{ 
+
+if(et[i]>et[j]) 
+
+{ 
+
+temp=at[i]; 
+
+at[i]=at[j];
+ 
+at[j]=temp;
+ 
+temp=et[i];
+ 
+et[i]=et[j];
+ 
+et[j]=temp;
+ 
+strcpy(t,pn[i]); 
+
+strcpy(pn[i],pn[j]);
+ 
+strcpy(pn[j],t);
+ 
+}
+ 
+}
+ 
+for(i=0;i<n;i++) 
+
+{ 
+
+if(i==0)
+ 
+st[i]=at[i];
+ 
+else 
+
+st[i]=ft[i-1];
+ 
+wt[i]=st[i]-at[i];
+ 
+ft[i]=st[i]+et[i]; 
+
+ta[i]=ft[i]-at[i];
+ 
+totwt+=wt[i];
+ 
+totta+=ta[i];
+ 
+}
+ 
+awt=(float)totwt/n; 
+
+ata=(float)totta/n;
+ 
+printf("\nPname\tarrivaltime\texecutiontime\twaitingtime\ttatime"); 
+
+for(i=0;i<n;i++) 
+
+printf("\n%s\t%5d\t\t%5d\t\t%5d\t\t%5d",pn[i],at[i],et[i],wt[i],ta[i]);
+ 
+printf("\nAverage waiting time is:%f",awt); 
+
+printf("\nAverage turnaroundtime is:%f",ata);
+ 
+}
+
+
+
+
+6]priority
+#include<stdio.h> 
+#include<string.h> 
+void main() 
+{ 
+int et[20],at[10],n,i,j,temp,p[10],st[10],ft[10],wt[10],ta[10]; 
+int totwt=0,totta=0; 
+float awt,ata; 
+char pn[10][10],t[10]; 
+
+printf("Enter the number of process:"); 
+scanf("%d",&n); 
+for(i=0;i<n;i++) 
+{ 
+printf("Enter process name,arrivaltime,execution time & priority:"); 
+
+scanf("%s%d%d%d",pn[i],&at[i],&et[i],&p[i]); 
+} 
+for(i=0;i<n;i++) 
+for(j=i+1;j<n;j++) 
+{ 
+if(p[i]<p[j]) 
+{ 
+temp=p[i]; 
+p[i]=p[j]; 
+p[j]=temp; 
+temp=at[i]; 
+at[i]=at[j]; 
+at[j]=temp; 
+temp=et[i]; 
+et[i]=et[j]; 
+et[j]=temp; 
+strcpy(t,pn[i]); 
+strcpy(pn[i],pn[j]); 
+strcpy(pn[j],t); 
+} 
+} 
+for(i=0;i<n;i++) 
+{ 
+if(i==0) 
+{ 
+st[i]=at[i]; 
+wt[i]=st[i]-at[i]; 
+ft[i]=st[i]+et[i]; 
+ta[i]=ft[i]-at[i]; 
+} 
+else 
+{ 
+st[i]=ft[i-1]; 
+wt[i]=st[i]-at[i]; 
+ft[i]=st[i]+et[i]; 
+ta[i]=ft[i]-at[i]; 
+} 
+totwt+=wt[i]; 
+totta+=ta[i]; 
+} 
+awt=(float)totwt/n; 
+ata=(float)totta/n; 
+printf("\nPname\tarrivaltime\texecutiontime\tpriority\twaitingtime\ttatime"); 
+for(i=0;i<n;i++) 
+printf("\n%s\t%5d\t\t%5d\t\t%5d\t\t%5d\t\t%5d",pn[i],at[i],et[i],p[i],wt[i],ta[i]); 
+printf("\nAverage waiting time is:%f",awt); 
+printf("\nAverage turnaroundtime is:%f",ata); 
+
+}
+
+
+
+
+
+7]round robin
+#include<stdio.h> 
+#include<conio.h> 
+void main() 
+{ 
+int et[30],ts,n,i,x=0,tot=0; 
+char pn[10][10]; 
+
+printf("Enter the no of processes:"); 
+scanf("%d",&n); 
+printf("Enter the time quantum:"); 
+scanf("%d",&ts); 
+for(i=0;i<n;i++) 
+{ 
+printf("enter process name & estimated time:"); 
+scanf("%s %d",pn[i],&et[i]); 
+} 
+printf("The processes are:"); 
+for(i=0;i<n;i++) 
+printf("process %d: %s\n",i+1,pn[i]); 
+for(i=0;i<n;i++) 
+tot=tot+et[i]; 
+while(x!=tot) 
+{ 
+for(i=0;i<n;i++) 
+{ 
+if(et[i]>ts) 
+{ 
+x=x+ts; 
+printf("\n %s -> %d",pn[i],ts); 
+et[i]=et[i]-ts; 
+} 
+else 
+if((et[i]<=ts)&&et[i]!=0) 
+{ 
+x=x+et[i]; 
+printf("\n %s -> %d",pn[i],et[i]); 
+et[i]=0;} 
+}
+} 
+printf("\n Total Estimated Time:%d",x); 
+
+}
+
+
+
+8]page replacement fifo
+#include<stdio.h>
+int main()
+{
+int i,j,n,a[50],frame[50],no,k,avail,count=0;
+
+
+printf("Enter the number of pages:\n");
+scanf("%d",&n);
+printf("Enter the page number\n");
+for(i=1;i<=n;i++)
+scanf("%d",&a[i]);
+printf("Enter the number of frames:\n");
+scanf("%d",&no);
+for(i=0;i<no;i++)
+frame[i]=-1;
+j=0;
+
+printf("\t Ref String \t Page Frames\n");
+for(i=1;i<=n;i++)
+ {
+	printf("%d\t\t",a[i]);
+	avail=0;
+	for(k=0;k<no;k++)
+	if(frame[k]==a[i])
+	avail=1;
+	if(avail==0)
+	{
+		frame[j]=a[i];
+		j=(j+1)%no;
+		count++;
+		for(k=0;k<no;k++)
+	printf("%d\t",frame[k]);
+	}
+	printf("\n");
+ }
+	printf("Page fault=%d", count);
+
+}
+
+
+
+
+
+
